@@ -10,7 +10,7 @@ Notice: This module is currently in beta, and might not always be here. It is pu
 sudo coreos-installer install /dev/sda --ignition-url https://raw.githubusercontent.com/AspieSoft/fedora-coreos/main/coreos.ign
 
 # or temporary redirect
-sudo coreos-installer install /dev/sda --ignition-url https://test.aspiesoft.com/coreos.ign
+sudo coreos-installer install /dev/sda -I https://test.aspiesoft.com/coreos.ign
 
 reboot
 ```
