@@ -9,4 +9,5 @@ Notice: This module is currently in beta, and might not always be here. It is pu
 ```shell script
 git clone https://github.com/AspieSoft/fedora-coreos.git
 sudo coreos-installer install /dev/sda --ignition-file fedora-coreos/coreos.ign
+reboot
 ```
