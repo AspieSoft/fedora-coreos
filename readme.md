@@ -7,7 +7,6 @@ Notice: This module is currently in beta, and might not always be here. It is pu
 ## Installation
 
 ```shell script
-wget https://github.com/AspieSoft/fedora-coreos/archive/main.zip
-unzip main.zip
-coreos-installer install /dev/sda --ignition-file fedora-coreos/coreos.ign
+git clone https://github.com/AspieSoft/fedora-coreos.git
+sudo coreos-installer install /dev/sda --ignition-file fedora-coreos/coreos.ign
 ```
