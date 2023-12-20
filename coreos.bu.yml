@@ -45,32 +45,24 @@ systemd:
         ExecStart=/usr/bin/rpm-ostree install tlp tlp-rdw thermald
         ExecStart=/usr/bin/rpm-ostree install fail2ban clamav clamd clamav-update
         ExecStart=/usr/bin/rpm-ostree install cronie pwgen rkhunter
-        ExecStart=/usr/bin/rpm-ostree install git
+        ExecStart=/usr/bin/rpm-ostree install python python3 python-pip python3-pip
+        ExecStart=/usr/bin/rpm-ostree install gcc-c++ make gcc
+        ExecStart=/usr/bin/rpm-ostree install java-1.8.0-openjdk java-11-openjdk java-latest-openjdk
+        ExecStart=/usr/bin/rpm-ostree install git nodejs
+        ExecStart=/usr/bin/npm -g i npm
+        ExecStart=/usr/bin/npm config set prefix ~/.npm
+        ExecStart=/usr/bin/npm -g i yarn
+        ExecStart=/usr/bin/rpm-ostree install golang pcre-devel
 
-        ExecStart=/usr/bin/systemctl stop clamav-freshclam
-        ExecStart=/usr/bin/freshclam
-        ExecStart=/usr/bin/systemctl start clamav-freshclam
-        ExecStart=/usr/bin/freshclam
-
-        ExecStart=/usr/bin/mkdir -p /VirusScan/quarantine
-        ExecStart=/usr/bin/chmod 0664 /VirusScan
-        ExecStart=/usr/bin/chmod 2660 /VirusScan/quarantine
-        ExecStart=/usr/bin/chmod -R 2660 /VirusScan/quarantine
-
-        ExecStart=/bin/bash -c 'if grep -R "^ScanOnAccess " /etc/clamd.d/scan.conf; then sudo sed -r -i \'s/^ScanOnAccess (.*)$/ScanOnAccess yes/m\' /etc/clamd.d/scan.conf; else echo \'ScanOnAccess yes\' | sudo tee -a /etc/clamd.d/scan.conf; fi'
-        ExecStart=/bin/bash -c 'if grep -R "^OnAccessMountPath " /etc/clamd.d/scan.conf; then sudo sed -r -i \'s#^OnAccessMountPath (.*)$#OnAccessMountPath /#m\' /etc/clamd.d/scan.conf; else echo \'OnAccessMountPath /\' | sudo tee -a /etc/clamd.d/scan.conf; fi'
-        ExecStart=/bin/bash -c 'if grep -R "^OnAccessPrevention " /etc/clamd.d/scan.conf; then sudo sed -r -i \'\' /etc/clamd.d/scan.conf; else echo \'OnAccessPrevention no\' | sudo tee -a /etc/clamd.d/scan.conf; fi'
-        ExecStart=/bin/bash -c 'if grep -R "^OnAccessExtraScanning " /etc/clamd.d/scan.conf; then sudo sed -r -i \'s/^OnAccessExtraScanning (.*)$/OnAccessExtraScanning yes/m\' /etc/clamd.d/scan.conf; else echo \'OnAccessExtraScanning yes\' | sudo tee -a /etc/clamd.d/scan.conf; fi'
-        ExecStart=/bin/bash -c 'if grep -R "^OnAccessExcludeUID " /etc/clamd.d/scan.conf; then sudo sed -r -i \'s/^OnAccessExcludeUID (.*)$/OnAccessExcludeUID 0/m\' /etc/clamd.d/scan.conf; else echo \'OnAccessExcludeUID 0\' | sudo tee -a /etc/clamd.d/scan.conf; fi'
-        ExecStart=/bin/bash -c 'if grep -R "^User " /etc/clamd.d/scan.conf; then sudo sed -r -i \'s/^User (.*)$/User root/m\' /etc/clamd.d/scan.conf; else echo \'User root\' | sudo tee -a /etc/clamd.d/scan.conf; fi'
-
-        ExecStart=/usr/bin/mkdir -p /etc/aspiesoft-clamav-scanner
-        ExecStart=/usr/bin/git clone https://github.com/AspieSoft/linux-clamav-download-scanner.git
-        ExecStart=/usr/bin/cp -rf linux-clamav-download-scanner/* /etc/aspiesoft-clamav-scanner
-        ExecStart=/usr/bin/rm -rf linux-clamav-download-scanner
+        ExecStart=/usr/bin/git clone https://github.com/AspieSoft/linux-clamav-download-scanner.git /etc/linux-clamav-download-scanner
+        ExecStart=/bin/bash /linux-clamav-download-scanner/install.sh --force
+        ExecStart=/usr/bin/rm -rf /linux-clamav-download-scanner
 
         ExecStart=/usr/bin/rkhunter --update -q
         ExecStart=/usr/bin/rkhunter --propupd -q
+
+        ExecStart=/usr/bin/rpm-ostree install nano neofetch btrfs-progs lvm2 xfsprogs udftools p7zip p7zip-plugins hplip hplip-gui inotify-tools
+        ExecStart=/usr/bin/rpm-ostree install guvcview
 
         ExecStart=/bin/systemctl disable systemd-resolved
         ExecStart=/bin/touch /var/lib/%N.stamp
@@ -115,6 +107,8 @@ systemd:
     - name: fail2ban.service
       enabled: true
     - name: clamav-freshclam.service
+      enabled: true
+    - name: aspiesoft-clamav-download-scanner.service
       enabled: true
 storage:
   files:
@@ -263,6 +257,13 @@ storage:
         inline: |
           #!/usr/bin/bash
           if curl -s --head --request GET "$1" | grep -E "200 OK|HTTP/[0-9]+ 200" > /dev/null; then curl "$1" -o "$2"; fi
+    - path: /etc/profile.d/golang.sh
+      contents:
+        inline: |
+          export GOROOT=/usr/lib/go
+          export GOPATH=$HOME/go
+          export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+          export GOFLAGS="-vet=off"
   links:
     - path: /etc/localtime
       target: ../usr/share/zoneinfo/America/New_York
@@ -272,6 +273,8 @@ storage:
       target: /usr/lib/systemd/system/tuned.service
     - path: /etc/systemd/system/kdump.service.target
       target: /dev/null
+    - path: /usr/share/go
+      target: /lib/golang
 kernel_arguments:
   should_exist:
     - spectre_v2=on
