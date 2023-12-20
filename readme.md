@@ -17,5 +17,5 @@ reboot
 
 ## Default Login
 
-User: core
-Password: 1234
+- User: core
+- Password: 1234
