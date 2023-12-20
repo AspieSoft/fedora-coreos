@@ -14,3 +14,8 @@ sudo coreos-installer install /dev/sda -I https://test.aspiesoft.com/coreos.ign
 
 reboot
 ```
+
+## Default Login
+
+User: core
+Password: 1234
