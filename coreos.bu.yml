@@ -91,16 +91,6 @@ systemd:
       mask: true
     - name: sshd.socket
       enabled: true
-    - name: NetworkManager-wait-online.service
-      enabled: false
-    - name: accounts-daemon.service
-      enabled: false
-    - name: debug-shell.service
-      enabled: false
-    - name: nfs-client.target
-      enabled: false
-    - name: remote-fs.target
-      enabled: false
 storage:
   files:
     - path: /etc/ssh/sshd_config.d/10-custom.conf
@@ -175,23 +165,6 @@ storage:
               }
             }
           }
-    - path: /bin/curl-write-if-ok
-      contents:
-        inline: |
-          #!/bin/bash
-          if curl -s --head --request GET "$1" | grep -E "200 OK|HTTP/[0-9]+ 200" > /dev/null; then curl "$1" -o "$2"; fi
-    - path: /usr/bin/curl-write-if-ok
-      contents:
-        inline: |
-          #!/usr/bin/bash
-          if curl -s --head --request GET "$1" | grep -E "200 OK|HTTP/[0-9]+ 200" > /dev/null; then curl "$1" -o "$2"; fi
-    - path: /etc/profile.d/golang.sh
-      contents:
-        inline: |
-          export GOROOT=/usr/lib/go
-          export GOPATH=$HOME/go
-          export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-          export GOFLAGS="-vet=off"
   links:
     - path: /etc/localtime
       target: ../usr/share/zoneinfo/America/New_York
