@@ -26,8 +26,8 @@ systemd:
         ExecStart=/usr/bin/sed -r -i 's/#DNSSEC=.*$/DNSSEC=yes/m' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/sed -r -i 's/#DNSOverTLS=.*$/DNSOverTLS=yes/m' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/sed -r -i 's/#Cache=.*$/Cache=yes/m' /etc/systemd/resolved.conf
-        ExecStart=/usr/bin/sed -r -i 's/#DNS=.*$/DNS=1.1.1.2#cloudflare-dns.com?ip=1.1.1.2&name=Cloudflare&blockedif=zeroip 2606:4700:4700::1112#cloudflare-dns.com?ip=2606:4700:4700::1112&name=Cloudflare&blockedif=zeroip/m' /etc/systemd/resolved.conf
-        ExecStart=/usr/bin/sed -r -i 's/#FallbackDNS=.*$/DNS=8.8.4.4#dns.google 2001:4860:4860::8844#dns.google/m' /etc/systemd/resolved.conf
+        ExecStart=/usr/bin/sed -r -i 's/#DNS=.*$/DNS=1.1.1.2#cloudflare-dns.com 2606:4700:4700::1112#cloudflare-dns.com/m' /etc/systemd/resolved.conf
+        ExecStart=/usr/bin/sed -r -i 's/#FallbackDNS=.*$/FallbackDNS=8.8.4.4#dns.google 2001:4860:4860::8844#dns.google/m' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/systemctl restart systemd-resolved
         ExecStart=/usr/bin/rpm-ostree install firewalld qemu-guest-agent tuned unbound
         ExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac
@@ -53,6 +53,16 @@ systemd:
         ExecStart=/usr/bin/npm config set prefix ~/.npm
         ExecStart=/usr/bin/npm -g i yarn
         ExecStart=/usr/bin/rpm-ostree install golang pcre-devel
+
+        ExecStart=/usr/bin/git clone https://github.com/AspieSoft/linux-clamav-download-scanner.git /etc/linux-clamav-download-scanner
+        ExecStart=/bin/bash /linux-clamav-download-scanner/install.sh --force
+        ExecStart=/usr/bin/rm -rf /linux-clamav-download-scanner
+
+        ExecStart=/usr/bin/rkhunter --update -q
+        ExecStart=/usr/bin/rkhunter --propupd -q
+
+        ExecStart=/usr/bin/rpm-ostree install nano neofetch btrfs-progs lvm2 xfsprogs udftools p7zip p7zip-plugins hplip hplip-gui inotify-tools
+        ExecStart=/usr/bin/rpm-ostree install guvcview
 
         ExecStart=/bin/touch /var/lib/%N.stamp
         ExecStart=/bin/systemctl --no-block reboot
