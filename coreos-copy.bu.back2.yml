@@ -23,7 +23,7 @@ systemd:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStart=/usr/bin/sed -r -i 's/#DNSSEC=.*$/DNSSEC=allow-downgrade/m' /etc/systemd/resolved.conf
+        ExecStart=/usr/bin/sed -r -i 's/#DNSSEC=.*$/DNSSEC=yes/m' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/sed -r -i 's/#DNSOverTLS=.*$/DNSOverTLS=yes/m' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/sed -r -i 's/#Cache=.*$/Cache=yes/m' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/sed -r -i 's/#DNS=.*$/DNS=1.1.1.2#cloudflare-dns.com 2606:4700:4700::1112#cloudflare-dns.com/m' /etc/systemd/resolved.conf
