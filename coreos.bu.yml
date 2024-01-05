@@ -105,8 +105,6 @@ systemd:
       enabled: true
     - name: clamav-freshclam.service
       enabled: true
-    - name: aspiesoft-clamav-download-scanner.service
-      enabled: true
 storage:
   files:
     - path: /etc/ssh/sshd_config.d/10-custom.conf
