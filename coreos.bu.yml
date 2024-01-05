@@ -28,9 +28,8 @@ systemd:
         ExecStart=/usr/bin/sed -r -i 's/#Cache=.*$/Cache=yes/m' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/sed -r -i 's/#DNS=.*$/DNS=1.1.1.2#cloudflare-dns.com 2606:4700:4700::1112#cloudflare-dns.com/m' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/sed -r -i 's/#FallbackDNS=.*$/FallbackDNS=8.8.4.4#dns.google 2001:4860:4860::8844#dns.google/m' /etc/systemd/resolved.conf
-        ExecStart=/usr/bin/sed -r -i 's/#Domains=.*$/Domains=cloudflare-dns.com?ip=1.1.1.2&name=Cloudflare&blockedif=zeroip cloudflare-dns.com?ip=2606:4700:4700::1112&name=Cloudflare&blockedif=zeroip dns.google/m' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/systemctl restart systemd-resolved
-        ExecStart=/usr/bin/rpm-ostree install firewalld qemu-guest-agent tuned unbound
+        ExecStart=/usr/bin/rpm-ostree install firewalld qemu-guest-agent tuned
         ExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac
         ExecStart=/usr/bin/sed -i 's/nullok//g' /etc/pam.d/system-auth
         ExecStart=/usr/bin/bash -c 'if curl -s --head --request GET "https://raw.githubusercontent.com/Kicksecure/security-misc/master/etc/modprobe.d/30_security-misc.conf" | grep -E "200 OK|HTTP/[0-9]+ 200" > /dev/null; then curl "https://raw.githubusercontent.com/Kicksecure/security-misc/master/etc/modprobe.d/30_security-misc.conf" -o "/etc/modprobe.d/30_security-misc.conf"; fi'
@@ -144,69 +143,6 @@ storage:
         inline: |
           GSSAPIAuthentication no
           VerifyHostKeyDNS yes
-    - path: /etc/unbound/unbound.conf
-      overwrite: true
-      contents:
-        inline: |
-          server:
-            chroot: ""
-
-            auto-trust-anchor-file: "/var/lib/unbound/root.key"
-            trust-anchor-signaling: yes
-            root-key-sentinel: yes
-
-            tls-cert-bundle: /etc/ssl/certs/ca-certificates.crt
-            tls-ciphers: "PROFILE=SYSTEM"
-
-            hide-http-user-agent: yes
-            hide-identity: yes
-            hide-trustanchor: yes
-            hide-version: yes
-
-            deny-any: yes
-            harden-algo-downgrades: yes
-            harden-large-queries: yes
-            harden-referral-path: yes
-            harden-short-bufsize: yes
-            ignore-cd-flag: yes
-            max-udp-size: 3072
-            module-config: "validator iterator"
-            qname-minimisation-strict: yes
-            unwanted-reply-threshold: 10000000
-            use-caps-for-id: yes
-
-            outgoing-port-permit:  1024-65535
-            prefetch: yes
-            prefetch-key: yes
-
-          forward-zone:
-            name: "."
-            forward-tls-upstream: yes
-            forward-addr: 8.8.8.8#dns.google
-            forward-addr: 8.8.4.4#dns.google
-            forward-addr: 2001:4860:4860::8888#dns.google
-            forward-addr: 2001:4860:4860::8844#dns.google
-    - path: /etc/systemd/system/unbound.service.d/override.conf
-      contents:
-        inline: |
-          [Unit]
-          MemoryDenyWriteExecute=true
-          PrivateDevices=true
-          PrivateTmp=true
-          ProtectHome=true
-          ProtectClock=true
-          ProtectControlGroups=true
-          ProtectKernelLogs=true
-          ProtectKernelModules=true
-          # This breaks using socket options like 'so-rcvbuf'. Explicitly disable for visibility.
-          ProtectKernelTunables=true
-          ProtectProc=invisible
-          RestrictAddressFamilies=AF_INET AF_INET6 AF_NETLINK AF_UNIX
-          RestrictRealtime=true
-          SystemCallArchitectures=native
-          SystemCallFilter=~@clock @cpu-emulation @debug @keyring @module mount @obsoolete @resources
-          RestrictNamespaces=yes
-          LockPersonality=yes
     - path: /etc/docker/daemon.json
       contents:
         inline: |
@@ -232,8 +168,6 @@ storage:
   links:
     - path: /etc/localtime
       target: ../usr/share/zoneinfo/America/New_York
-    - path: /etc/systemd/system/multi-user.target.wants/unbound.service
-      target: /usr/lib/systemd/system/unbound.service
     - path: /etc/systemd/system/multi-user.target.wants/tuned.service
       target: /usr/lib/systemd/system/tuned.service
     - path: /etc/systemd/system/kdump.service.target
