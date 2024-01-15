@@ -91,14 +91,6 @@ systemd:
       mask: true
     - name: sshd.socket
       enabled: true
-    - name: NetworkManager-wait-online.service
-      enabled: false
-    - name: debug-shell.service
-      enabled: false
-    - name: nfs-client.target
-      enabled: false
-    - name: remote-fs.target
-      enabled: false
 storage:
   files:
     - path: /etc/ssh/sshd_config.d/10-custom.conf
