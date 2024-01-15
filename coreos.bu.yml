@@ -25,12 +25,18 @@ systemd:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStart=/usr/bin/sed -r -i 's/#DNSSEC=.*$/DNSSEC=allow-downgrade/m' /etc/systemd/resolved.conf
-        ExecStart=/usr/bin/sed -r -i 's/#DNSOverTLS=.*$/DNSOverTLS=yes/m' /etc/systemd/resolved.conf
-        ExecStart=/usr/bin/sed -r -i 's/#Cache=.*$/Cache=yes/m' /etc/systemd/resolved.conf
-        ExecStart=/usr/bin/sed -r -i 's/#DNS=.*$/DNS=1.1.1.2#cloudflare-dns.com 2606:4700:4700::1112#cloudflare-dns.com/m' /etc/systemd/resolved.conf
-        ExecStart=/usr/bin/sed -r -i 's/#FallbackDNS=.*$/FallbackDNS=8.8.4.4#dns.google 2001:4860:4860::8844#dns.google/m' /etc/systemd/resolved.conf
+        ExecStart=/usr/bin/sed -r -i 's/^#DNSSEC=.*$/DNSSEC=yes/m' /etc/systemd/resolved.conf
+        ExecStart=/usr/bin/sed -r -i 's/^#DNSOverTLS=.*$/DNSOverTLS=yes/m' /etc/systemd/resolved.conf
+        ExecStart=/usr/bin/sed -r -i 's/^#Cache=.*$/Cache=yes/m' /etc/systemd/resolved.conf
+        ExecStart=/usr/bin/sed -r -i 's/^#DNS=.*$/DNS=1.1.1.2#cloudflare-dns.com 2606:4700:4700::1112#cloudflare-dns.com/m' /etc/systemd/resolved.conf
+        ExecStart=/usr/bin/sed -r -i 's/^#FallbackDNS=.*$/FallbackDNS=8.8.4.4#dns.google 2001:4860:4860::8844#dns.google/m' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/systemctl restart systemd-resolved
+
+        ExecStart=/usr/bin/bash -c 'if [ "$(timeout 10 ping -c1 google.com 2>/dev/null)" = "" ]; then sed -r -i 's/^DNSSEC=.*$/DNSSEC=allow-downgrade/m' /etc/systemd/resolved.conf; fi'
+        ExecStart=/usr/bin/systemctl restart systemd-resolved
+        ExecStart=/usr/bin/bash -c 'if [ "$(timeout 10 ping -c1 google.com 2>/dev/null)" = "" ]; then sed -r -i 's/^DNSSEC=/#DNSSEC=/m' /etc/systemd/resolved.conf; fi'
+        ExecStart=/usr/bin/systemctl restart systemd-resolved
+
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive firewalld qemu-guest-agent tuned
         ExecStart=/usr/bin/rpm-ostree override remove cifs-utils samba-common-libs samba-client-libs libsmbclient libwbclient samba-common sssd-krb5-common sssd-ipa sssd-nfs-idmap sssd-ldap sssd-client sssd-ad sssd-common sssd-krb5 sssd-common-pac
         ExecStart=/usr/bin/sed -i 's/nullok//g' /etc/pam.d/system-auth
@@ -73,6 +79,9 @@ systemd:
 
         ExecStart=/usr/bin/rkhunter --update -q
         ExecStart=/usr/bin/rkhunter --propupd -q
+
+        ExecStart=/usr/bin/sed -r -i 's/^#DNSSEC=.*$/DNSSEC=yes/m' /etc/systemd/resolved.conf
+        ExecStart=/usr/bin/systemctl restart systemd-resolved
 
         ExecStart=/bin/touch /var/lib/%N.stamp
         ExecStart=/bin/systemctl --no-block reboot
