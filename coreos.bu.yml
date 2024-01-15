@@ -45,13 +45,20 @@ systemd:
 
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-39.noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-39.noarch.rpm
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive tlp tlp-rdw thermald
+
+        ExecStart=/usr/bin/ostree remote add preload https://copr.fedorainfracloud.org/coprs/elxreno/preload/repo/fedora-39/elxreno-preload-fedora-39.repo
+
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive fail2ban clamav clamd clamav-update
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive cronie pwgen rkhunter
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive python python3 python-pip python3-pip
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive gcc-c++ make gcc
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive java-1.8.0-openjdk java-11-openjdk java-latest-openjdk
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive git nodejs npm
+
         ExecStart=/usr/bin/rpm-ostree apply-live
+
+        ExecStart=-/usr/bin/rpm-ostree install --allow-inactive preload
+
         ExecStart=/usr/bin/npm -g i npm
         ExecStart=/usr/bin/npm config set prefix ~/.npm
         ExecStart=/usr/bin/npm -g i yarn
