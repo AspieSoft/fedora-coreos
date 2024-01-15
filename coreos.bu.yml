@@ -18,6 +18,7 @@ systemd:
         After=systemd-machine-id-commit.service
         After=network-online.target
         Before=zincati.service
+        # Before=graphical.target
         ConditionPathExists=!/var/lib/%N.stamp
 
         [Service]
