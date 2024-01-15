@@ -42,8 +42,9 @@ systemd:
         ExecStart=/usr/bin/bash -c 'if curl -s --head --request GET "https://raw.githubusercontent.com/Kicksecure/security-misc/master/etc/sysctl.d/30_security-misc_kexec-disable.conf" | grep -E "200 OK|HTTP/[0-9]+ 200" > /dev/null; then curl "https://raw.githubusercontent.com/Kicksecure/security-misc/master/etc/sysctl.d/30_security-misc_kexec-disable.conf" -o "/etc/sysctl.d/30_security-misc_kexec-disable.conf"; fi'
         ExecStart=/usr/bin/bash -c 'if curl -s --head --request GET "https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/chrony.conf" | grep -E "200 OK|HTTP/[0-9]+ 200" > /dev/null; then curl "https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/chrony.conf" -o "/etc/chrony.conf"; fi'
 
-        ExecStart=/usr/bin/rpm-ostree install --allow-inactive https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
-        ExecStart=/usr/bin/rpm-ostree install --allow-inactive https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+        # ExecStart=/usr/bin/rpm-ostree install --allow-inactive https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+        # ExecStart=/usr/bin/rpm-ostree install --allow-inactive https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+        ExecStart=/usr/bin/bash -c 'rpm-ostree install --allow-inactive https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm'
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive tlp tlp-rdw thermald
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive fail2ban clamav clamd clamav-update
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive cronie pwgen rkhunter
