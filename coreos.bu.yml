@@ -65,8 +65,8 @@ systemd:
 
         ExecStart=-/usr/bin/rpm-ostree install --allow-inactive --enablerepo=elxreno-preload preload
 
-        ExecStart=/usr/bin/npm -g i npm
         ExecStart=/usr/bin/npm config set prefix ~/.npm
+        ExecStart=/usr/bin/npm -g i npm
         ExecStart=/usr/bin/npm -g i yarn
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive golang pcre-devel
 
@@ -118,6 +118,8 @@ systemd:
       enabled: false
     - name: remote-fs.target
       enabled: false
+    - name: fail2ban.service
+      enabled: true
 storage:
   files:
     - path: /etc/ssh/sshd_config.d/10-custom.conf
