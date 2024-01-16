@@ -25,6 +25,9 @@ systemd:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
+
+        ExecStart=/usr/bin/bash -c 'if test -f /etc/test.txt; then touch /etc/test1.txt; else touch /etc/test0.txt; fi'
+
         ExecStart=/usr/bin/sed -r -i 's/^#DNSSEC=.*$/DNSSEC=yes/m' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/sed -r -i 's/^#DNSOverTLS=.*$/DNSOverTLS=yes/m' /etc/systemd/resolved.conf
         ExecStart=/usr/bin/sed -r -i 's/^#Cache=.*$/Cache=yes/m' /etc/systemd/resolved.conf
@@ -121,6 +124,10 @@ systemd:
       enabled: false
 storage:
   files:
+    - path: /etc/test.txt
+      contents:
+        inline: |
+          this is a test
     - path: /etc/ssh/sshd_config.d/10-custom.conf
       contents:
         inline: |
