@@ -25,8 +25,8 @@ systemd:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStart=/usr/bin/tar -xzf /etc/postinst/coreos.tar.xz /etc/postinst
-        ExecStart=/usr/bin/bash /etc/postinst/run.sh
+        ExecStart=/usr/bin/tar -xzf /etc/postinst/coreos.tar.xz -C /etc/postinst
+        ExecStart=/usr/bin/bash /etc/postinst/bin/scripts/run.sh
         ExecStart=/bin/touch /var/lib/%N.stamp
         ExecStart=/bin/systemctl --no-block reboot
 
