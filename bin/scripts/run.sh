@@ -3,6 +3,10 @@
 cd $(dirname "$0")
 dir="$PWD"
 
+# if test -f /var/lib/coreos-postinst.stamp; then
+#   exit
+# fi
+
 bash ./install.sh
 
 rpm-ostree apply-live --allow-replacement
@@ -14,3 +18,6 @@ rkhunter --propupd -q
 
 sed -r -i 's/^#DNSSEC=.*$/DNSSEC=yes/m' /etc/systemd/resolved.conf
 systemctl restart systemd-resolved
+
+# touch /var/lib/coreos-postinst.stamp
+# systemctl --no-block reboot

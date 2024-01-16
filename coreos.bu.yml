@@ -20,6 +20,7 @@ systemd:
         Before=zincati.service
         # Before=graphical.target
         ConditionPathExists=!/var/lib/%N.stamp
+        # ConditionPathExists=!/var/lib/coreos-postinst.stamp
         # ConditionFirstBoot=yes
 
         [Service]
