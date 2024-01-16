@@ -67,7 +67,7 @@ storage:
     - path: /etc/postinst/coreos.tar.xz
       overwrite: true
       contents:
-        source: https://raw.githubusercontent.com/AspieSoft/fedora-coreos/main/bin/coreos.tar.xz.gz
+        source: https://raw.githubusercontent.com/AspieSoft/fedora-coreos/main/coreos.tar.xz.gz
         compression: gzip
         verification:
           hash: sha512-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

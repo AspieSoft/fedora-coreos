@@ -23,7 +23,7 @@ fi
 
 #* compress bin directory
 tar -czf coreos.tar.xz ./bin/*
-# sum=$(sha512sum coreos.tar.xz | sed -E 's/\s+.*$//')
+sum=$(sha512sum coreos.tar.xz | sed -E 's/\s+.*$//')
 gzip --best --force coreos.tar.xz
-sum=$(sha512sum coreos.tar.xz.gz | sed -E 's/\s+.*$//')
+# sum=$(sha512sum coreos.tar.xz.gz | sed -E 's/\s+.*$//')
 sed -r -i "s/\"sha512-0000[^\"]+\"/\"sha512-$sum\"/" coreos.ign
