@@ -1,0 +1,173 @@
+variant: fcos
+version: 1.4.0
+passwd:
+  users:
+    - name: core
+      groups:
+        - wheel
+        - sudo
+        - docker
+      password_hash: "$y$j9T$jFCECSzAMayax6L/LNHaE1$0X7OErFgoOHiN6WOPBImBiPlNJB9e6YRU.3fWTYgx/B"
+systemd:
+  units:
+    - name: postinst.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Initial System Setup
+        After=systemd-machine-id-commit.service
+        After=network-online.target
+        Before=zincati.service
+        # Before=graphical.target
+        ConditionPathExists=!/var/lib/%N.stamp
+        # ConditionFirstBoot=yes
+
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/mkdir /etc/postinst
+        ExecStart=/usr/bin/git clone https://github.com/AspieSoft/fedora-coreos.git /etc/postinst
+        ExecStart=/usr/bin/chmod +x /etc/postinst/run.sh
+        ExecStart=/usr/bin/bash /etc/postinst/run.sh
+        ExecStart=/bin/touch /var/lib/%N.stamp
+        ExecStart=/bin/systemctl --no-block reboot
+
+        [Install]
+        WantedBy=multi-user.target
+    - name: setsebool.service
+      enabled: true
+      contents: |
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/sbin/setsebool container_use_cephfs off
+        ExecStart=/usr/sbin/setsebool virt_use_nfs off
+        ExecStart=/usr/sbin/setsebool virt_use_samba off
+        RemainAfterExit=yes
+        [Install]
+        WantedBy=multi-user.target
+    - name: docker.service
+      enabled: true
+    - name: fstrim.timer
+      enabled: true
+    - name: systemd-oomd.service
+      enabled: true
+    - name: rpm-ostree-countme.timer
+      enabled: false
+      mask: true
+    - name: sshd.socket
+      enabled: true
+    - name: NetworkManager-wait-online.service
+      enabled: false
+    - name: debug-shell.service
+      enabled: false
+    - name: nfs-client.target
+      enabled: false
+    - name: remote-fs.target
+      enabled: false
+storage:
+  files:
+    - path: /etc/ssh/sshd_config.d/10-custom.conf
+      contents:
+        inline: |
+          X11Forwarding no
+          GSSAPIAuthentication no
+    - path: /etc/zincati/config.d/51-rollout-wariness.toml
+      contents:
+        inline: |
+          [identity]
+          rollout_wariness = 0
+    - path: /etc/zincati/config.d/55-updates-strategy.toml
+      contents:
+        inline: |
+          [updates]
+          strategy = "periodic"
+          [updates.periodic]
+          time_zone = "localtime"
+          [[updates.periodic.window]]
+          days = [ "Sun" ]
+          start_time = "0:00"
+          length_minutes = 60
+    - path: /etc/tuned/active_profile
+      overwrite: true
+      contents:
+        inline: |
+          virtual-guest
+    - path: /etc/tuned/profile_mode
+      overwrite: true
+      contents:
+        inline: |
+          manual
+    - path: /etc/systemd/zram-generator.conf
+      overwrite: true
+      contents:
+        inline: |
+          # This config file enables a /dev/zram0 device with the default settings
+          [zram0]
+          zram-fraction = 1
+          max-zram-size = 8192
+    - path: /etc/security/limits.d/30-disable-coredump.conf
+      overwrite: true
+      contents:
+        inline: |
+          * hard core 0
+    - path: /etc/ssh/ssh_config.d/10-custom.conf
+      overwrite: true
+      contents:
+        inline: |
+          GSSAPIAuthentication no
+          VerifyHostKeyDNS yes
+    - path: /etc/docker/daemon.json
+      contents:
+        inline: |
+          {
+            "default-runtime": "runc",
+            "runtimes": {
+              "runsc-ptrace": {
+                "path": "/var/usrlocal/bin/runsc",
+                "runtimeArgs": [
+                  "--platform=ptrace",
+                  "--network=host"
+                ]
+              },
+              "runsc-kvm": {
+                "path": "/var/usrlocal/bin/runsc",
+                "runtimeArgs": [
+                  "--platform=kvm",
+                  "--network=host"
+                ]
+              }
+            }
+          }
+  links:
+    - path: /etc/localtime
+      target: ../usr/share/zoneinfo/America/New_York
+    - path: /etc/systemd/system/multi-user.target.wants/tuned.service
+      target: /usr/lib/systemd/system/tuned.service
+    - path: /etc/systemd/system/kdump.service.target
+      target: /dev/null
+kernel_arguments:
+  should_exist:
+    - spectre_v2=on
+    - spec_store_bypass_disable=on
+    - l1tf=full,force
+    - mds=full,nosmt
+    - tsx=off
+    - txs_async_abort=full,nosmt
+    - kvm.nx_huge_pages=force
+    - nosmt=force
+    - l1d_flush=on
+    - mmio_stable_data=full,nosmt
+    - random.trust_bootloader=off
+    - random.trust_cpu=off
+    - intel_iommu=on
+    - amd_iommu=on
+    - iommu.passthrough=0 iommu.strict=1
+    - slab_nomerge
+    - init_on_alloc=1
+    - init_on_free=1
+    - pti=on
+    - vsyscall=none
+    - page_alloc.shuffle=1
+    - randomize_kstack_offset=on
+    - extra_latent_entropy
+    - defubfs=off
