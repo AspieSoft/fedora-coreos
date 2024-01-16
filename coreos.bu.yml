@@ -55,8 +55,7 @@ systemd:
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-39.noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-39.noarch.rpm
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive tlp tlp-rdw thermald
 
-        # ExecStart=/usr/bin/ostree remote add elxreno-preload https://copr.fedorainfracloud.org/coprs/elxreno/preload/repo/fedora-39/elxreno-preload-fedora-39.repo
-        # ExecStart=/usr/bin/bash -c 'if curl -s --head --request GET "https://download.copr.fedorainfracloud.org/results/elxreno/preload/pubkey.gpg" | grep -E "200 OK|HTTP/[0-9]+ 200" > /dev/null; then curl "https://download.copr.fedorainfracloud.org/results/elxreno/preload/pubkey.gpg" -o "/etc/pki/rpm-gpg/RPM-GPG-KEY-elxreno-preload-39-x86_64"; fi'
+        ExecStart=/usr/bin/bash -c 'if curl -s --head --request GET "https://copr.fedorainfracloud.org/coprs/elxreno/preload/repo/fedora-39/elxreno-preload-fedora-39.repo" | grep -E "200 OK|HTTP/[0-9]+ 200" > /dev/null; then curl "https://copr.fedorainfracloud.org/coprs/elxreno/preload/repo/fedora-39/elxreno-preload-fedora-39.repo" -o "/etc/yum.repos.d/elxreno-preload.repo"; fi'
 
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive fail2ban clamav clamd clamav-update
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive cronie pwgen rkhunter
@@ -65,21 +64,27 @@ systemd:
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive java-1.8.0-openjdk java-11-openjdk java-latest-openjdk
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive git nodejs npm
 
-        # ExecStart=/usr/bin/rpm-ostree apply-live --allow-replacement
+        ExecStart=/usr/bin/rpm-ostree install --allow-inactive nano neofetch btrfs-progs lvm2 xfsprogs udftools p7zip p7zip-plugins hplip hplip-gui inotify-tools
+        ExecStart=/usr/bin/rpm-ostree install --allow-inactive guvcview
 
-        # ExecStart=/usr/bin/rpm-ostree install --allow-inactive preload
+        ExecStart=/usr/bin/rpm-ostree install --allow-inactive flatpak snapd
 
-        # ExecStart=/usr/bin/npm config set prefix ~/.npm
-        # ExecStart=/usr/bin/npm -g i npm
-        # ExecStart=/usr/bin/npm -g i yarn
+        ExecStart=-/usr/bin/rpm-ostree apply-live --allow-replacement
+
+        ExecStart=/usr/bin/rpm-ostree install --allow-inactive preload
+
+        ExecStart=/usr/bin/npm config set prefix ~/.npm
+        ExecStart=/usr/bin/npm -g i npm
+        ExecStart=/usr/bin/npm -g i yarn
         ExecStart=/usr/bin/rpm-ostree install --allow-inactive golang pcre-devel
 
         ExecStart=/usr/bin/git clone https://github.com/AspieSoft/linux-clamav-download-scanner.git /etc/linux-clamav-download-scanner
         ExecStart=/bin/bash /etc/linux-clamav-download-scanner/install.sh --force
         ExecStart=/usr/bin/rm -rf /etc/linux-clamav-download-scanner
 
-        ExecStart=/usr/bin/rpm-ostree install --allow-inactive nano neofetch btrfs-progs lvm2 xfsprogs udftools p7zip p7zip-plugins hplip hplip-gui inotify-tools
-        ExecStart=/usr/bin/rpm-ostree install --allow-inactive guvcview
+        ExecStart=/usr/bin/flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+        # ExecStart=/usr/bin/flatpak remote-add --if-not-exists rhel https://flatpaks.redhat.io/rhel.flatpakrepo
+        ExecStart=/usr/bin/flatpak update -y --noninteractive
 
         ExecStart=/usr/bin/rkhunter --update -q
         ExecStart=/usr/bin/rkhunter --propupd -q
