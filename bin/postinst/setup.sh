@@ -16,7 +16,7 @@ npm -g i yarn
 
 #* setup security
 gitVer="$(curl --silent 'https://api.github.com/repos/AspieSoft/linux-clamav-download-scanner/releases/latest' | grep '"tag_name":' | sed -E 's/.*\"([^\"]+)\".*/\1/')"
-if [ "$gitVer" != "" -a "$(echo "$gitVer" | sed -E 's/[0-9\.]*//g')" = "" ] && [ ! -f "$dir/../files/etc/linux-clamav-download-scanner/version.txt" -o "$gitVer" != "$(cat "$dir/../files/etc/linux-clamav-download-scanner/version.txt")" ]; then
+if [ "$gitVer" != "" -a "$(echo "$gitVer" | sed -E 's/v?[0-9\.]*//g')" = "" ] && [ ! -f "$dir/../files/etc/linux-clamav-download-scanner/version.txt" -o "$gitVer" != "$(cat "$dir/../files/etc/linux-clamav-download-scanner/version.txt")" ]; then
   git clone https://github.com/AspieSoft/linux-clamav-download-scanner.git "/etc/linux-clamav-download-scanner"
 else
   cp -rf "$dir/../files/etc/linux-clamav-download-scanner" "/etc/linux-clamav-download-scanner"
