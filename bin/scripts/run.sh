@@ -31,3 +31,7 @@ systemctl restart systemd-resolved
 
 touch /var/lib/coreos-postinst.stamp
 systemctl --no-block reboot
+
+#todo: allow user to select profile after install (may add a manual script to run)
+# note: cli profile should always be run on init, and if the user selects cli, nothing needs to be rerun
+# may store this script in files instead, and have this as the on first boot menu
