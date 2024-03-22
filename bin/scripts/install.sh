@@ -42,4 +42,4 @@ rpm-ostree install --allow-inactive cronie pwgen rkhunter
 rpm-ostree install --allow-inactive flatpak snapd
 
 #* install common packages
-rpm-ostree install --allow-inactive nano neofetch btrfs-progs lvm2 xfsprogs udftools p7zip p7zip-plugins hplip hplip-gui inotify-tools guvcview
+rpm-ostree install --allow-inactive nano neofetch btrfs-progs lvm2 xfsprogs ntfs-3g ntfsprogs exfatprogs udftools p7zip p7zip-plugins hplip hplip-gui inotify-tools guvcview
