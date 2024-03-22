@@ -3,9 +3,7 @@
 cd $(dirname "$0")
 dir="$PWD"
 
-echo "$1"
-
-if test -f "$1"; then
+if test -f /var/lib/coreos-postinst.stamp; then
   exit
 fi
 
@@ -31,5 +29,5 @@ rkhunter --propupd -q
 sed -r -i 's/^#DNSSEC=.*$/DNSSEC=yes/m' /etc/systemd/resolved.conf
 systemctl restart systemd-resolved
 
-touch "$1"
+touch /var/lib/coreos-postinst.stamp
 systemctl --no-block reboot
