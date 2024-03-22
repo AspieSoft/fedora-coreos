@@ -23,8 +23,8 @@ echo -e "\rInstalling..."
 
 bash ./setup.sh
 
-rkhunter --update -q
-rkhunter --propupd -q
+rkhunter --update
+rkhunter --propupd
 
 sed -r -i 's/^#DNSSEC=.*$/DNSSEC=yes/m' /etc/systemd/resolved.conf
 systemctl restart systemd-resolved
