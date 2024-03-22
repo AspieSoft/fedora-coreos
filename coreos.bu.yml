@@ -26,6 +26,8 @@ systemd:
         [Service]
         Type=oneshot
         RemainAfterExit=yes
+        StandardOutput=tty
+        StandardError=tty
         ExecStart=/usr/bin/tar -xzf /etc/postinst/coreos.tar.xz -C /etc/postinst
         ExecStart=/usr/bin/bash /etc/postinst/bin/scripts/run.sh
         ExecStart=/bin/touch /var/lib/%N.stamp
