@@ -4,7 +4,8 @@
 rpm-ostree install --allow-inactive preload
 systemctl enable preload --now
 
-systemctl enable tlp --now
+# systemctl enable tlp --now
+systemctl enable tlp #! --now makes the system hang
 tlp start
 
 systemctl enable thermald --now
@@ -30,7 +31,7 @@ rm -rf /etc/linux-clamav-download-scanner
 #* install package managers
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 # flatpak remote-add --if-not-exists rhel https://flatpaks.redhat.io/rhel.flatpakrepo
-flatpak update -y --noninteractive
+# flatpak update -y --noninteractive #! this method makes the system hang
 
 ln -s /var/lib/snapd/snap /snap
 systemctl enable snapd --now
