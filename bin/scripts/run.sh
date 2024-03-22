@@ -3,9 +3,11 @@
 cd $(dirname "$0")
 dir="$PWD"
 
-# if test -f /var/lib/coreos-postinst.stamp; then
-#   exit
-# fi
+echo "$1"
+
+if test -f "$1"; then
+  exit
+fi
 
 if ! test -f "/etc/postinst/install.done"; then
   echo -e "\rInstalling Core..."
@@ -29,5 +31,5 @@ rkhunter --propupd -q
 sed -r -i 's/^#DNSSEC=.*$/DNSSEC=yes/m' /etc/systemd/resolved.conf
 systemctl restart systemd-resolved
 
-# touch /var/lib/coreos-postinst.stamp
-# systemctl --no-block reboot
+touch "$1"
+systemctl --no-block reboot
