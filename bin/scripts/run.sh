@@ -7,6 +7,8 @@ dir="$PWD"
 #   exit
 # fi
 
+echo -e "\rInstalling..."
+
 bash ./install.sh
 
 rpm-ostree apply-live --allow-replacement
