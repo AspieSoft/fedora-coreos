@@ -7,11 +7,19 @@ dir="$PWD"
 #   exit
 # fi
 
+if ! test -f "/etc/postinst/install.done"; then
+  echo -e "\rInstalling Core..."
+
+  bash ./install.sh
+
+  #rpm-ostree apply-live --allow-replacement
+
+  touch "/etc/postinst/install.done"
+  systemctl --no-block reboot
+  exit
+fi
+
 echo -e "\rInstalling..."
-
-bash ./install.sh
-
-rpm-ostree apply-live --allow-replacement
 
 bash ./setup.sh
 

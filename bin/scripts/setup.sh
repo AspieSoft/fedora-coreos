@@ -11,6 +11,8 @@ systemctl enable thermald --now
 
 #* install programing languages
 npm config set prefix ~/.npm
+#todo: fix getting stuck in npm install (may move this to run after a reboot on an auto update service)
+# may also need to reboot before running setup service
 npm -g i npm
 npm -g i yarn
 
